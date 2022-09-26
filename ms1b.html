@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script>
+        
+        $(document).ready(function () {
+            $("#app").hide();
+            $("#search").click(function(){
+            $("#app").show();
+            
+
+            const Book = ({...book}) => `
+                <div class="box">
+                    <img src="${book.volumeInfo.imageLinks.smallThumbnail}" alt="${book.volumeInfo.title}" style="width:90px">
+                    <a href="${book.volumeInfo.infoLink}">
+                        <p><strong>Title: ${book.volumeInfo.title}
+                            ${book.volumeInfo.subtitle ?": " + book.volumeInfo.subtitle : ''}</strong></p>
+                    </a>
+                    <p>Author(s): ${book.volumeInfo.authors.join(', ')}</p>
+                    <p>Publisher: ${book.volumeInfo.publisher}, ${book.volumeInfo.publishedDate}</p>
+                    <p>Page Count: ${book.volumeInfo.pageCount}</p>
+                    <p>Other Details</p>
+                    <ul>
+                        <li>Print Type: ${book.volumeInfo.printType}</li>
+                        <li>Categories: ${book.volumeInfo.categories && book.volumeInfo.categories.join(', ')}</li>
+                        <li>Sale Info: ${book.saleInfo.saleability}</li>
+                        <li>Average Rating: ${book.volumeInfo.averageRating ? +book.volumeInfo.averageRating : 'None'}</li>
+                    </ul>
+                    <p>Description: ${book.volumeInfo.description}</p>
+                    
+                </div><hr>
+                `;
+            
+                var input = $("#input").val();
+                var inputitem = new RegExp(input, 'i');
+
+            $.get('https://www.googleapis.com/books/v1/volumes?q=modern%20web', function (data) {
+                let books = [];
+                if (data && data.items) {
+                    books = data.items;
+                }
+                for (let i = 0; i < data.items.length; i++)
+                {
+                    if (!data.items[i].volumeInfo.title.match(inputitem))
+                    {
+                        delete data.items[i];
+                    }
+                }
+                $('#app').html(data.items.map(Book).join(''));
+            });
+        })});
+    </script>
+    <head>
+        <style>
+            *{box-sizing: border-box;}
+            body {font-family: Arial, Helvetica, sans-serif;}
+            header {
+                background-color: #666;
+                padding: 30px;
+                text-align: center;
+                font-size: 35px;
+                color: white;
+            }
+            header h6 {
+                font-size: 18px
+            }
+            nav {
+                float: left;
+                width: 30%;
+                height: 1000px;
+                background: #ccc;
+                padding: 20px;
+            }
+            nav ul {
+                list-style-type: none;
+                padding: 0;
+            }
+            article {
+                float: left;
+                padding: 20px;
+                width: 70%;
+                background-color: #f1f1f1;
+            }
+            section::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+            @media (max-width: 600px) {
+                nav, article {
+                    width: 100%;
+                    height: auto;
+                }
+            }
+            figure{
+                border: 1pt solid #a8a8a8;
+                background-color: white;
+                padding: 1%;
+                float: right;
+            }
+            svg {
+                width: 30px;
+                height: 30px;
+                stroke: black;
+                stroke-width: 4;
+                fill: rgb(0, 110, 255);
+            }
+        </style>
+    </head>
+    <header>Alex Garcia<br/>
+        <h6>Kennesaw State University</h6>
+    </header>
+    
+    <section>
+        <nav>
+            <a href="https://ccse.kennesaw.edu/it/">KSU Department of IT</a></br></br>
+            <a href="Index.html">Home Page</a>
+
+            <h3>Labs</h3>
+            <ul>
+                <li><p>Milestone 1: 
+                    <a href="ms1a.html">Single Book</a>, 
+                    <a href="ms1b.html">Book List</a></p></li>
+            </ul>
+        </nav>
+
+        <article>
+            <div class="heading">
+                <h1>Milestone 1 (Book List)</h1>
+                <hr>
+            </div>
+            <div>
+                Use the search feature by searching for the book title. 
+                Leave the search bar blank to display the complete book list.
+                </br></br>
+                <label>Search Book by Name</label>
+                <input id="input" type="text">
+                <button id="search">Search</button>
+                </br><hr>
+            </div>
+            <div id="app">
+            </div>
+        </article>
+    </section>
+</html>

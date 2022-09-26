@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            *{box-sizing: border-box;}
+            body {font-family: Arial, Helvetica, sans-serif;}
+            header {
+                background-color: #666;
+                padding: 30px;
+                text-align: center;
+                font-size: 35px;
+                color: white;
+            }
+            header h6 {
+                font-size: 18px
+            }
+            nav {
+                float: left;
+                width: 30%;
+                height: 525px;
+                background: #ccc;
+                padding: 20px;
+            }
+            nav ul {
+                list-style-type: none;
+                padding: 0;
+            }
+            article {
+                float: left;
+                padding: 20px;
+                width: 70%;
+                height: 525px;
+                background-color: #f1f1f1;
+            }
+            section::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+            @media (max-width: 600px) {
+                nav, article {
+                    width: 100%;
+                    height: auto;
+                }
+            }
+            figure{
+                border: 1pt solid #a8a8a8;
+                background-color: white;
+                padding: 1%;
+                float: right;
+            }
+            svg {
+                width: 30px;
+                height: 30px;
+                stroke: black;
+                stroke-width: 4;
+                fill: rgb(0, 110, 255);
+            }
+        </style>
+    </head>
+    <header>Alex Garcia<br/>
+        <h6>Kennesaw State University</h6>
+    </header>
+    
+    <section>
+        <nav>
+            <a href="https://ccse.kennesaw.edu/it/">KSU Department of IT</a>
+            <h3>Labs</h3>
+            <ul>
+                <li><p>Milestone 1: 
+                    <a href="ms1a.html">Single Book</a>, 
+                    <a href="ms1b.html">Book List</a></p></li>
+            </ul>
+        </nav>
+
+        <article>
+            <p>
+            This website is a web development project for my Advanced Web and Mobile App course at KSU. Over the semester, I will add links to my labs and milestones in the sidebar.
+            </p>
+        </article>
+    </section>
+</html>
