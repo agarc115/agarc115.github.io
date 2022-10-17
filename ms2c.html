@@ -8,7 +8,7 @@
             <div class="column">
                 <a href="${book.accessInfo.webReaderLink}"><p style="font-size: 30px"><strong>${book.volumeInfo.title}</strong></p>
                 ${book.volumeInfo.subtitle ?"" + book.volumeInfo.subtitle : ''}</a><br><br>
-                <p>Author(s): ${book.volumeInfo.authors.join(', ')}</p>
+                <p>Author(s): ${book.volumeInfo.authors?.join(', ')}</p>
                 <p>Publisher: ${book.volumeInfo.publisher}, ${book.volumeInfo.publishedDate}</p>
                 <p>Length: ${book.volumeInfo.pageCount} pages</p>
                 <p>Dimensions: H: ${book.volumeInfo.dimensions.height}, W: ${book.volumeInfo.dimensions.width}, 
