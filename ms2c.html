@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+    <script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+        const Book = ({...book}) => `
+            <div class="row">
+            <div class="column">
+                <a href="${book.accessInfo.webReaderLink}"><p style="font-size: 30px"><strong>${book.volumeInfo.title}</strong></p>
+                ${book.volumeInfo.subtitle ?"" + book.volumeInfo.subtitle : ''}</a><br><br>
+                <p>Author(s): ${book.volumeInfo.authors.join(', ')}</p>
+                <p>Publisher: ${book.volumeInfo.publisher}, ${book.volumeInfo.publishedDate}</p>
+                <p>Length: ${book.volumeInfo.pageCount} pages</p>
+                <p>Dimensions: H: ${book.volumeInfo.dimensions.height}, W: ${book.volumeInfo.dimensions.width}, 
+                    T: ${book.volumeInfo.dimensions.thickness}</p>
+                <p>Ratings:</p>
+                <ul>
+                    <li>Average Rating: ${book.volumeInfo.averageRating}</li>
+                    <li>Rating Count: ${book.volumeInfo.ratingsCount}</li>
+                </ul>
+            </div>
+            <div class="column" style="text-align: center">
+                <img src="${book.volumeInfo.imageLinks?.thumbnail}" alt="${book.volumeInfo.title}" style="height:200px"><br>
+                <p><strong>Description: </strong>${book.volumeInfo.description}</p>
+                </br>
+            </div>
+            </div>
+            `;
+            const newUrl = sessionStorage.getItem("bookUri");
+            $.get(newUrl, function (data) {
+                let books = [];
+                if (data) {
+                    books.push(data)
+                }
+                $('#app').html(books.map(Book).join(''));
+            });
+        });
+    </script>
+    <head>
+        <style>
+            *{box-sizing: border-box;}
+            body {font-family: Arial, Helvetica, sans-serif;
+                background-color:#444;}
+            header {
+                background-color: #222;
+                padding: 30px;
+                text-align: center;
+                color: rgb(216, 216, 216);
+            }
+            header h1{
+                font-size: 24px;
+            }
+            header h6 {
+                font-size: 18px
+            }
+            nav {
+                float: left;
+                width: 30%;
+                height: 710px;
+                background: #ccc;
+                padding: 20px;
+            }
+            nav ul {
+                list-style-type: none;
+                padding: 0;
+            }
+            article {
+                float: left;
+                padding: 20px;
+                width: 70%;
+                height: 710px;
+                background-color: #f1f1f1;
+            }
+            section::after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+            @media (max-width: 600px) {
+                nav, article {
+                    width: 100%;
+                    height: auto;
+                }
+            }
+            div{
+                background-color:#333;
+                color: rgb(216, 216, 216);
+                padding: 5px;
+            }
+            .column {
+                float: left;
+                width: 50%;
+                padding: 10px;
+            }
+            .row:after {
+                content: "";
+                display: table;
+                clear: both;
+            }
+            a:link{
+                color: rgb(0, 183, 255); 
+            }
+            a:visited{
+                color: rgba(0, 136, 255, 0.693); 
+            }
+            img{
+                border: 3px solid rgb(216, 216, 216);
+            }
+        </style>
+    </head>
+    <header>
+        <h1>Alex Garcia</h1>
+        <h6>Kennesaw State University</h6>
+        <a href="index.html">Home Page</a> | 
+        Milestones: <a href="ms1a.html">1A</a> | 
+                    <a href="ms1b.html">1B</a> |
+                    <a href="#">2</a>
+    </header>
+    
+    <section>
+        <div>
+            <div style="text-align: center;">
+                Milestone 2: <a href="ms2a.html">Book Search</a> | <a href="ms2b.html">My Bookshelf</a>
+                </br><hr>
+            </div>
+            <h1>Milestone 2: Book Details</h1>
+            <hr>
+            <div id="app">
+            </div>
+        </div>
+    </section>
+</html>
