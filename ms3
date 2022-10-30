@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html>
+<script src="https://code.jquery.com/jquery-3.1.0.min.js"></script>
+<script>
+    var pageValue;
+    var current;
+    function currentUrl(url){
+        current=url;
+    }
+    function pageStore(page){
+        pageValue = page;
+    };
+    function display(newUrl){
+        $.get(newUrl, function (data) {
+            let books = [];
+            if (data) {
+                books.push(data)
+            }
+            $('#details').html(books.map(Book).join(''));
+        });
+        const Book = ({...book}) => `
+            <div class="box" style="padding: 15px;">
+                <a href="${book.accessInfo.webReaderLink}"><p style="font-size: 30px"><strong>${book.volumeInfo.title}</strong></p>
+                ${book.volumeInfo.subtitle ?"" + book.volumeInfo.subtitle : ''}</a><br><br>
+                <img src="${book.volumeInfo.imageLinks?.thumbnail}" alt="${book.volumeInfo.title}" style="height:150px"><br>
+                <p>Author(s): ${book.volumeInfo.authors?.join(', ')}</p>
+                <p>Publisher: ${book.volumeInfo.publisher}, ${book.volumeInfo.publishedDate}</p>
+                <p>Length: ${book.volumeInfo.pageCount} pages</p>
+                <p>Dimensions: H: ${book.volumeInfo.dimensions?.height}, W: ${book.volumeInfo.dimensions?.width}, 
+                    T: ${book.volumeInfo.dimensions?.thickness}</p>
+                <p>Ratings:</p>
+                <ul>
+                    <li>Average Rating: ${book.volumeInfo.averageRating}</li>
+                    <li>Rating Count: ${book.volumeInfo.ratingsCount}</li>
+                </ul>
+                <p><strong>Description: </strong>${book.volumeInfo.description}</p>
+                </br>
+            </div>
+        `;
+    };
+    function showResults(newUrl) {
+        $.get(newUrl, function (data) {
+            let infoArray = [];
+            if (data && data.items) {
+                infoArray=data.items;
+                $('#results').html(infoArray.map(Info).join(''));
+                $('#results').append("<hr><div>Page "+pageValue+"</div>");
+            }
+            else{
+                $('#results').html("No results to display");
+                $('#results').append("<hr><div>Page "+pageValue+"</div>");
+            }
+        });
+        const Info = ({...info}) => `
+            <div class="box">
+                <p class="book" onclick="display('${info.selfLink}')">${info.volumeInfo.title}</p>
+            </div>
+        `;
+    }
+    $(document).ready(function () {
+        $("#bookshelfbutton").click(function() {
+            var u = 'https://www.googleapis.com/books/v1/users/103287774136802574784/bookshelves/2/volumes?startIndex=';
+            currentUrl(u);
+            pageStore(1);
+            showResults(u+'0&maxResults=10');
+        });
+        $("#input").keyup(function(){
+            var input = $("#input").val();
+            var u = 'https://www.googleapis.com/books/v1/volumes?q="'+input+'"&startIndex=';
+            currentUrl(u);
+            pageStore(1);
+            showResults(u+'0&maxResults=10');
+        });
+        $("#page1").click(function(){
+            var u = current+'0&maxResults=10';
+            pageStore(1);
+            showResults(u);
+        });
+        $("#page2").click(function(){
+            var u = current+'10&maxResults=10';
+            pageStore(2);
+            showResults(u);
+        });
+        $("#page3").click(function(){
+            var u = current+'20&maxResults=10';
+            pageStore(3);
+            showResults(u);
+        });
+        $("#page4").click(function(){
+            var u = current+'30&maxResults=10';
+            pageStore(4);
+            showResults(u);
+        });
+        $("#page5").click(function(){
+            var u = current+'40&maxResults=10';
+            pageStore(5);
+            showResults(u);
+        });
+    });
+</script>
+
+<head>
+    <style>
+        *{box-sizing: border-box;}
+        body {font-family: Arial, Helvetica, sans-serif;
+            background-color:#444;}
+        header {
+            background-color: #222;
+            padding: 30px;
+            text-align: center;
+            color: rgb(216, 216, 216);
+        }
+        header h1{
+            font-size: 24px;
+        }
+        header h6 {
+            font-size: 18px
+        }
+        nav {
+            float: left;
+            width: 30%;
+            height: 710px;
+            background: #ccc;
+            padding: 20px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        article {
+            float: left;
+            padding: 20px;
+            width: 70%;
+            height: 710px;
+            background-color: #f1f1f1;
+        }
+        section::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        @media (max-width: 600px) {
+            nav, article {
+                width: 100%;
+                height: auto;
+            }
+        }
+        div{
+            background-color: lightgoldenrodyellow;
+            color: black;
+        }
+        .column {
+            float: left;
+            width: 50%;
+        }
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        a:link{
+            color: rgb(0, 183, 255); 
+        }
+        a:visited{
+            color: rgba(0, 136, 255, 0.693); 
+        }
+        img{
+            border: 3px solid rgb(216, 216, 216);
+        }
+        .divbutton{
+            background-color: lightgoldenrodyellow; color: black; padding: 5px; width: 100%;
+        }
+        .divbutton:hover{
+            background-color: grey; 
+            color: white;
+        }
+        .pagebutton{
+            background-color: lightgoldenrodyellow; color: black; 
+            width: 20%; text-align: center; float: left;
+        }
+        .pagebutton:hover{
+            background-color: grey; color: white;
+        }
+        .book:hover{
+            background-color: grey; color: white;
+        }
+    </style>
+</head>
+
+<header>
+    <h1>Alex Garcia</h1>
+    <h6>Kennesaw State University</h6>
+    <a href="index.html">Home Page</a> | 
+    Milestones: <a href="ms1a.html">1A</a> | 
+                <a href="ms1b.html">1B</a> |
+                <a href="ms2.html">2</a> |
+                <a href="#">3</a>
+</header>
+<section>
+    <div class="row" id="container">
+        <div class="column" id="sidebar" style="background-color: lightgoldenrodyellow; height: 100%; width: 15%;">
+            <div class="divbutton" id="bookshelfbutton">
+                <h3>My Bookshelf</h3>
+            </div>
+            
+            <div id="searchbar" 
+            style="text-align: center; padding: 10px;">
+                Search for books <br>by key terms:<br>
+                <input id="input" type="text">
+            </div>
+            <div style="background-color: lightgoldenrodyellow; height: 355px;">
+            </div>
+        </div>
+
+        <div class="column" id="resultsbar" style="width: 35%;">
+            <div>
+                <div id="page1" class="pagebutton"><h5>Page 1</h5></div>
+                <div id="page2" class="pagebutton"><h5>Page 2</h5></div>
+                <div id="page3" class="pagebutton"><h5>Page 3</h5></div>
+                <div id="page4" class="pagebutton"><h5>Page 4</h5></div>
+                <div id="page5" class="pagebutton"><h5>Page 5</h5></div>
+            </div>
+            
+            <div id="results" style="padding-top: 10px; padding: 10px;"></div>
+        </div>
+
+        <div class="column" id="detailsbar" style="width: 50%;">
+            <div id="details"></div>
+        </div>
+    </div>
+</section>
+</html>
