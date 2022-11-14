@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.2.0/mustache.min.js"></script>
+
+<script id="detailstemplate" type="text/template">
+    <div class="column" width="50%">
+        <a href="{{accessInfo.webReaderLink}}"><p style="text-align: center; font-size: 30px">
+        <strong>{{volumeInfo.title}}</strong></p>
+        <p style="text-align: center;">{{#volumeInfo.subtitle}} {{volumeInfo.subtitle}} {{/volumeInfo.subtitle}}</p>
+        </a><br>
+        <p>Author(s): {{volumeInfo.authors}} </p>
+        <p>Publisher: {{volumeInfo.publisher}}, {{volumeInfo.publishedDate}}</p>
+        <p>Length: {{volumeInfo.pageCount}} pages</p>
+            <p>Dimensions: H: {{#volumeInfo.dimensions.height}} {{volumeInfo.dimensions.height}} {{/volumeInfo.dimensions.height}}
+                {{^volumeInfo.dimensions.height}} Undefined{{/volumeInfo.dimensions.height}}, 
+                W: {{#volumeInfo.dimensions.width}} {{volumeInfo.dimensions.width}} {{/volumeInfo.dimensions.width}}
+                {{^volumeInfo.dimensions.width}} Undefined{{/volumeInfo.dimensions.width}}, 
+                T: {{#volumeInfo.dimensions.thickness}} {{volumeInfo.dimensions.thickness}} {{/volumeInfo.dimensions.thickness}}
+                {{^volumeInfo.dimensions.thickness}} Undefined{{/volumeInfo.dimensions.thickness}}</p>
+            <p>Ratings:</p>
+            <ul>
+                <li>Average Rating: {{#volumeInfo.averageRating}} {{volumeInfo.averageRating}} {{/volumeInfo.averageRating}}
+                    {{^volumeInfo.averageRating}} Not Availible{{/volumeInfo.averageRating}}</li>
+                <li>Rating Count: {{#volumeInfo.ratingsCount}} {{volumeInfo.ratingsCount}} {{/volumeInfo.ratingsCount}}
+                    {{^volumeInfo.ratingsCount}} None{{/volumeInfo.ratingsCount}}</li>
+            </ul>
+    </div>
+    <div class="column" width="50%" style="text-align: center;">
+        <img src="{{volumeInfo.imageLinks.thumbnail}}" alt="{{volumeInfo.title}}" style="height:150px"><br>
+        <p><strong>Description: </strong>{{#volumeInfo.description}} {{{volumeInfo.description}}} {{/volumeInfo.description}}
+            {{^volumeInfo.description}}<br>None{{/volumeInfo.description}}</p>
+    </div>
+</script>
+
+<script id="listtemplate" type="text/template">
+    {{#items}}
+        <div class="flexitem">
+            <p class="book" style="margin-top: 0" onclick="display('{{selfLink}}')">{{volumeInfo.title}}</p>
+        </div>
+    {{/items}}
+</script>
+
+<script>
+    var pageValue;
+    var current;
+    var flex;
+    function currentUrl(url){
+        current=url;
+    }
+    function pageStore(page){
+        pageValue = page;
+    };
+    function storeFlex(newflex){
+        flex = newflex;
+    }
+
+    function display(newUrl){
+            $("#details1").html("<h1 style='text-align: center;'>Loading Details...</h1>");
+            $("#details2").html("<h1 style='text-align: center;'>Loading Details...</h1>");
+            $.getJSON(newUrl, function (data) {
+                var template = $('#detailstemplate').html();
+                var html = Mustache.render(template, data);
+                $("#details1").html(html);
+
+            });
+            $("#cover").show();
+            $("#bookdetails").fadeIn();
+    };
+
+    function showResults(newUrl) {
+        $.getJSON(newUrl, function (data) {
+            if(!data.items){
+                $("#results").html("No results");
+            }
+            else{
+                var template = $('#listtemplate').html();
+                var html = Mustache.render(template, data);
+                $("#results").html(html);
+                if(flex=="grid"){
+                    $(".flexitem").css("width", "20%").css("height","100%").css("text-align","center");
+                    $("#results").attr("data-layout","Grid");
+                }
+                $("#pagedisplay").html("<hr><div>Page "+pageValue+"</div>");
+            }
+            
+        });
+    }
+
+    $(document).ready(function () {
+        $("#bookshelfbutton").click(function() {
+            var u = 'https://www.googleapis.com/books/v1/users/103287774136802574784/bookshelves/2/volumes?startIndex=';
+            currentUrl(u);
+            pageStore(1);
+            showResults(u+'0&maxResults=10');
+        });
+        $("#searchbtn").click(function(){
+            var input = $("#input").val();
+            var u = 'https://www.googleapis.com/books/v1/volumes?q="'+input+'"&startIndex=';
+            currentUrl(u);
+            pageStore(1);
+            showResults(u+'0&maxResults=10');
+        });
+        $("#page1").click(function(){
+            var u = current+'0&maxResults=10';pageStore(1);showResults(u);
+        });
+        $("#page2").click(function(){
+            var u = current+'10&maxResults=10';pageStore(2);showResults(u);
+        });
+        $("#page3").click(function(){
+            var u = current+'20&maxResults=10';pageStore(3);showResults(u);
+        });
+        $("#page4").click(function(){
+            var u = current+'30&maxResults=10';pageStore(4);showResults(u);
+        });
+        $("#page5").click(function(){
+            var u = current+'40&maxResults=10';pageStore(5);showResults(u);
+        });
+        $("#listview").click(function(){
+            $(".flexitem").css("width", "100%").css("height","100%").css("text-align","left");
+            $("#results").attr("data-layout","List");
+            storeFlex("list");
+        });
+        $("#gridview").click(function(){
+            $(".flexitem").css("width", "20%").css("height","100%").css("text-align","center");
+            $("#results").attr("data-layout","Grid");
+            storeFlex("grid");
+        });
+        
+        $("#cover").click(function(){
+            $("#cover").fadeOut();
+            $("#bookdetails").fadeOut();
+        });
+    });
+</script>
+
+<head>
+    <style>
+        *{box-sizing: border-box;}
+        body {font-family: Arial, Helvetica, sans-serif;
+            background-color:#444;}
+        header {
+            background-color: #222;
+            padding: 30px;
+            text-align: center;
+            color: rgb(216, 216, 216);
+        }
+        header h1{font-size: 24px;}
+        header h6 {font-size: 18px}
+        section::after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        div{
+            background-color: lightgoldenrodyellow;
+            color: black;
+        }
+        .column {
+            float: left;
+            width: 50%;
+        }
+        .row:after {
+            content: "";
+            display: table;
+            clear: both;
+        }
+        a:link{
+            color: rgb(0, 183, 255); 
+        }
+        a:visited{
+            color: rgba(0, 136, 255, 0.693); 
+        }
+        img{
+            border: 3px solid rgb(216, 216, 216);
+        }
+        .divbutton{
+            background-color: lightgoldenrodyellow; color: black; 
+            padding: 0.5px; width: 100%; text-align: center;
+        }
+        .divbutton:hover{
+            background-color: grey; 
+            color: white;
+        }
+        .pagebutton{
+            background-color: lightgoldenrodyellow; color: black; 
+            width: 14%; text-align: center; float: left;
+        }
+        .pagebutton:hover{
+            background-color: grey; color: white;
+        }
+        .book:hover{
+            background-color: grey; color: white;
+        }
+
+        #cover{
+            position: fixed;
+		    width: 100%;
+		    height: 100%;
+            opacity: 0;
+            top: 0px;
+            left: 0px;
+		    display: none;
+        }
+        #bookdetails{
+		    position: fixed;
+		    top: 50px;
+	    	left: 120px;
+		    overflow: auto;
+		    width: 80%;
+		    height: 80%;
+	    	padding:10px;
+		    display: none;
+    		box-shadow: 0px 0px 20px 20px #bbbbbb;
+	    	outline: 500px solid rgba(0,0,0,0.5);
+	    }
+        #results{
+            display: flex;
+	        flex-wrap: wrap;
+            padding: 1px;
+        }
+        .flexitem{
+            width: 100%;
+        }
+    </style>
+</head>
+
+<header>
+    <h1>Alex Garcia</h1>
+    <h6>Kennesaw State University</h6>
+    <a href="index.html">Home Page</a> | 
+    Milestones: <a href="ms1a.html">1A</a> | 
+                <a href="ms1b.html">1B</a> |
+                <a href="ms2.html">2</a> |
+                <a href="ms3.html">3</a> |
+                <a href="#">4</a>
+</header>
+<section>
+    <div class="row" id="container">
+        <div class="column" id="sidebar" style="background-color: lightgoldenrodyellow; height: 100%; width: 20%;">
+            <div class="divbutton" id="bookshelfbutton">
+                <h3>My Bookshelf</h3>
+            </div>
+            
+            <div id="searchbar" 
+            style="text-align: center; padding: 10px;">
+                Search for books <br>by key terms:<br>
+                <input id="input" type="text">
+                <input type="button" value="Search" id="searchbtn">
+            </div>
+            <div style="height: 362px;">
+            </div>
+        </div>
+
+        <div class="column" id="resultsbar" style="width: 80%;">
+            <div>
+                <div id="listview" class="pagebutton"><h5>List View</h5></div>
+                <div id="gridview" class="pagebutton"><h5>Grid View</h5></div>
+                <div id="page1" class="pagebutton"><h5>Page 1</h5></div>
+                <div id="page2" class="pagebutton"><h5>Page 2</h5></div>
+                <div id="page3" class="pagebutton"><h5>Page 3</h5></div>
+                <div id="page4" class="pagebutton"><h5>Page 4</h5></div>
+                <div id="page5" class="pagebutton"><h5>Page 5</h5></div>
+            </div><br><br><br><hr>
+            
+            <div id="results" data-layout="List"></div>
+            <div id="pagedisplay"></div>
+        </div>
+    </div>
+    <div id="cover">
+    </div>
+    <div id="bookdetails">
+        <div style="color: gray; text-align: center;">
+            Click outside this panel to close it
+        </div>
+        <div id="details1" class="row">
+        </div>
+    </div>
+</section>
+</html>
